@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 17 09:20:25 2023
+
+@author: federicoastori
+"""
+import numpy as np
+from scipy import stats
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from tqdm import tqdm
+
+M=1000
+
+def ND_sphere(N_dim):
+    # par=np.zeros([M,N_dim])
+    par=[]
+    r=[]
+    for i in range(N_dim):
+        par.append(list(stats.uniform(0,1).rvs(M)))
+
+    r=np.sum(par**np.array(2), axis=0)
+
+    return ((4/3*np.pi*np.sum(r<1)/M), np.abs(((4/3*np.pi)-(4/3*np.pi*np.sum(r<1)/M)) / (4/3*np.pi)))
+
+# estimate, error = ND_sphere(3)
+# print('estimate=%1.3f' % (estimate))
+# print('error=%1.3f' % (error))
+
+dim = np.linspace(3,10,10) # numero di dimensioni non M!!!
+
+xx=[]
+er=[]
+for k in tqdm(dim):
+    v,err = ND_sphere(int(k))
+    xx.append(v)
+    er.append(err)
+    
+plt.figure()    
+plt.bar(dim,xx,yerr=er, capsize=8, alpha=0.5, label=dim, linewidth=2 )
+plt.ylim(0,3)
+plt.xlabel('# dimensions')
+plt.ylabel('estimate volume')
