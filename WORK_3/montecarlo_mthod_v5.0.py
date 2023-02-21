@@ -37,7 +37,7 @@ def integral(N,sigma):
     return (I, knownresult, abs_err  )
 
 sigma=int(np.random.random_integers(0,10,1)) 
-N=np.arange(1e3,1e6,1e4) #[1e3,2e3,3e3,5e3,7e3,1e4, 3e4, 5e4,8e4,1e5, 5e5, 9e5,1e6,1e7,1e8]
+N=np.arange(1e3,1e6,3e4) #[1e3,2e3,3e3,5e3,7e3,1e4, 3e4, 5e4,8e4,1e5, 5e5, 9e5,1e6,1e7,1e8]
 
 def distribution(N,sigma):
     global rsult
@@ -74,7 +74,7 @@ def distribution(N,sigma):
 
     return (result)
 
-realization=10000
+realization=1000
 R=[]
 
 for temp in tqdm(range(realization)):
@@ -82,12 +82,17 @@ for temp in tqdm(range(realization)):
     if temp%10==0: #since tqdm doesn't work in Spyder I use this if-cycle
         print(temp)
 
-index_N=9
+index_N=30 #N=1000
 
-plt.hist(R[:][index_N], density=True, fill=False, bins=50, label='N=%1.0f' % (N[index_N])) #for a fixed N (the 5th N in th N-array)
-x_grid=np.linspace(np.min(R[:][index_N])-1, np.max(R[:][index_N])+1,100)
-plt.plot(x_grid, norm(loc=np.mean(R[:][index_N]), scale=astroMLstats.sigmaG(R[:][index_N])).pdf(x_grid), label=r'gaussian with $\sigma_G$', color='red') # sigma_G helps to avoids the histogram's outliyers 
-plt.plot(x_grid, norm(loc=np.mean(R[:][index_N]), scale=np.std(R[:][index_N])).pdf(x_grid), label='gaussian with $\sigma$', color='orange')
+plt.hist(R[:][index_N], density=True, fill=False, bins=100, label='N=%1.0f' % (N[index_N])) #for a fixed N (the 5th N in th N-array)
+x_grid=np.linspace(np.min(R[:][index_N])-10, np.max(R[:][index_N])+10,100)
+plt.plot(x_grid, norm(loc=np.mean(R[:][index_N]), scale=astroMLstats.sigmaG(R[:][index_N])).pdf(x_grid), label=r'gaussian with $\sigma_G$ and mean', color='red') # sigma_G helps to avoids the histogram's outliyers 
+plt.plot(x_grid, norm(loc=np.mean(R[:][index_N]), scale=np.std(R[:][index_N])).pdf(x_grid), label='gaussian with $\sigma$ and mean', color='orange')
+
+#median is a best estimateor since the presence of outlyers
+plt.plot(x_grid, norm(loc=np.median(R[:][index_N]), scale=astroMLstats.sigmaG(R[:][index_N])).pdf(x_grid), label=r'gaussian with $\sigma_G$ and median', color='blue') # sigma_G helps to avoids the histogram's outliyers 
+plt.plot(x_grid, norm(loc=np.median(R[:][index_N]), scale=np.std(R[:][index_N])).pdf(x_grid), label='gaussian with $\sigma$ and median', color='yellow')
+
 plt.title('%1.0f Realizations' % (realization))
 plt.legend(loc='best')
     
